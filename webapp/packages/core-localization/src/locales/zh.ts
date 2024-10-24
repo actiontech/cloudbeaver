@@ -12,6 +12,7 @@ export default [
   ['ui_processing_cancel', '取消'],
   ['ui_processing_canceling', '取消中...'],
   ['ui_processing_retry', '重试'],
+  ['ui_create_workflow', '发起变更工单'],
   ['ui_processing_ok', '好'],
   ['ui_processing_create', '创建'],
   ['ui_processing_save', '保存'],

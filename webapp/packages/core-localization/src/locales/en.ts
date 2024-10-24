@@ -13,6 +13,7 @@ export default [
   ['ui_processing_canceling', 'Cancelling...'],
   ['ui_processing_reload', 'Reload'],
   ['ui_processing_retry', 'Retry'],
+  ['ui_create_workflow', 'Create Workflow'],
   ['ui_processing_ok', 'Ok'],
   ['ui_processing_create', 'Create'],
   ['ui_processing_save', 'Save'],
