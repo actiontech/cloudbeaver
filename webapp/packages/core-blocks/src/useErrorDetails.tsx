@@ -52,6 +52,7 @@ export function useErrorDetails(error: Error | null): HookType {
   const name = error?.name;
   const message = error?.message;
   const executionFailedMessage = (error as any)?.execution_failed_message as string;
+  console.log(error, executionFailedMessage, 'print error');
 
   return {
     name,
