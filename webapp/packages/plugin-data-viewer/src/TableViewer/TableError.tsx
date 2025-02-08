@@ -150,7 +150,9 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
         <IconOrImage icon={icon} title={error.message} onClick={() => errorInfo.show()} />
         <div>
           <error-message>{error.message}</error-message>
-          {error.executionFailedMessage && <error-sub-message>{error.executionFailedMessage}</error-sub-message>}
+          {error.executionFailedMessage && (
+            <error-sub-message>{`${translate('ui_audit_error_tips')}：${error.executionFailedMessage}`}</error-sub-message>
+          )}
         </div>
       </error-body>
       <controls>
