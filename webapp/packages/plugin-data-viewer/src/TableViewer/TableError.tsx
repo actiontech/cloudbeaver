@@ -70,6 +70,11 @@ const style = css`
   error-message {
     white-space: pre-wrap;
   }
+  error-sub-message {
+    display: block;
+    font-size: 0.9em;
+    margin-top: 8px;
+  }
   IconOrImage {
     width: 40px;
     height: 40px;
@@ -174,7 +179,12 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     <error {...use({ animated, collapsed: !errorInfo.display, errorHidden })} className={className}>
       <error-body>
         <IconOrImage icon={icon} title={error.message} onClick={() => errorInfo.show()} />
-        <error-message>{error.message}</error-message>
+        <div>
+          <error-message>{error.message}</error-message>
+          {error.executionFailedMessage && (
+            <error-sub-message>{`${translate('ui_audit_error_tips')}：${error.executionFailedMessage}`}</error-sub-message>
+          )}
+        </div>
       </error-body>
       <controls>
         <Button type="button" mod={['outlined']} onClick={() => errorInfo.hide()}>

@@ -29,6 +29,7 @@ export default [
   ['ui_error', 'Ошибка'],
   ['ui_error_message', 'Ошибка:'],
   ['ui_error_close', 'Закрыть'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_clear', 'Очистить'],
   ['ui_remove', 'Убрать'],
   ['ui_close', 'Закрыть'],

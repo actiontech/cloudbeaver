@@ -30,6 +30,7 @@ export default [
   ['ui_error', 'Errore'],
   ['ui_error_message', 'Errore:'],
   ['ui_error_close', 'Chiudi'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_clear', 'Clear'],
   ['ui_remove', 'Remove'],
   ['ui_close', 'Chiudi'],
