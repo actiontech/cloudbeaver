@@ -10,7 +10,7 @@ import { injectable } from '@cloudbeaver/core-di';
 import { CommonDialogService, IMenuContext } from '@cloudbeaver/core-dialogs';
 import { LocalizationService } from '@cloudbeaver/core-localization';
 import { DATA_CONTEXT_NAV_NODE, EObjectFeature } from '@cloudbeaver/core-navigation-tree';
-import { ACTION_EXPORT, ActionService, DATA_CONTEXT_MENU_NESTED, MenuService } from '@cloudbeaver/core-view';
+import { ActionService, DATA_CONTEXT_MENU_NESTED, MenuService } from '@cloudbeaver/core-view';
 import { DATA_CONTEXT_CONNECTION } from '@cloudbeaver/plugin-connections';
 import { IDatabaseDataSource, IDataContainerOptions, ITableFooterMenuContext, TableFooterMenuService } from '@cloudbeaver/plugin-data-viewer';
 import type { IDataQueryOptions } from '@cloudbeaver/plugin-sql-editor';
@@ -30,53 +30,48 @@ export class DataExportMenuService {
   ) {}
 
   register(): void {
-    this.tableFooterMenuService.registerMenuItem({
-      id: 'export ',
-      order: 5,
-      title: 'data_transfer_dialog_export',
-      tooltip: 'data_transfer_dialog_export_tooltip',
-      icon: 'table-export',
-      isPresent(context) {
-        return context.contextType === TableFooterMenuService.nodeContextType;
-      },
-      isHidden: () => this.isDisabled(),
-      isDisabled(context) {
-        return (
-          context.data.model.isLoading() ||
-          context.data.model.isDisabled(context.data.resultIndex) ||
-          !context.data.model.getResult(context.data.resultIndex)
-        );
-      },
-      onClick: this.exportData.bind(this),
-    });
-
-    this.menuService.addCreator({
-      isApplicable: context => {
-        const node = context.tryGet(DATA_CONTEXT_NAV_NODE);
-
-        if (node && !node.objectFeatures.includes(EObjectFeature.dataContainer)) {
-          return false;
-        }
-
-        return !this.isDisabled() && context.has(DATA_CONTEXT_CONNECTION) && !context.has(DATA_CONTEXT_MENU_NESTED);
-      },
-      getItems: (context, items) => [...items, ACTION_EXPORT],
-    });
-
-    this.actionService.addHandler({
-      id: 'data-export',
-      isActionApplicable: (context, action) => action === ACTION_EXPORT && context.has(DATA_CONTEXT_CONNECTION) && context.has(DATA_CONTEXT_NAV_NODE),
-      handler: async (context, action) => {
-        const node = context.get(DATA_CONTEXT_NAV_NODE);
-        const connection = context.get(DATA_CONTEXT_CONNECTION);
-
-        this.commonDialogService.open(DataExportDialog, {
-          connectionKey: createConnectionParam(connection),
-          name: node?.name,
-          containerNodePath: node?.id,
-        });
-      },
-    });
+    // this.tableFooterMenuService.registerMenuItem({
+    //   id: 'export ',
+    //   order: 5,
+    //   title: 'data_transfer_dialog_export',
+    //   tooltip: 'data_transfer_dialog_export_tooltip',
+    //   icon: 'table-export',
+    //   isPresent(context) {
+    //     return context.contextType === TableFooterMenuService.nodeContextType;
+    //   },
+    //   isHidden: () => this.isDisabled(),
+    //   isDisabled(context) {
+    //     return (
+    //       context.data.model.isLoading() ||
+    //       context.data.model.isDisabled(context.data.resultIndex) ||
+    //       !context.data.model.getResult(context.data.resultIndex)
+    //     );
+    //   },
+    //   onClick: this.exportData.bind(this),
+    // });
+    // this.menuService.addCreator({
+    //   isApplicable: context => {
+    //     const node = context.tryGet(DATA_CONTEXT_NAV_NODE);
+    //     if (node && !node.objectFeatures.includes(EObjectFeature.dataContainer)) {
+    //       return false;
+    //     }
+    //     return !this.isDisabled() && context.has(DATA_CONTEXT_CONNECTION) && !context.has(DATA_CONTEXT_MENU_NESTED);
+    //   },
+    //   getItems: (context, items) => [...items, ACTION_EXPORT],
+    // });
+    // this.actionService.addHandler({
+    //   id: 'data-export',
+    //   isActionApplicable: (context, action) => action === ACTION_EXPORT && context.has(DATA_CONTEXT_CONNECTION) && context.has(DATA_CONTEXT_NAV_NODE),
+    //   handler: async (context, action) => {
+    //     const node = context.get(DATA_CONTEXT_NAV_NODE);
+    //     const connection = context.get(DATA_CONTEXT_CONNECTION);
+    //     this.commonDialogService.open(DataExportDialog, {
+    //       connectionKey: createConnectionParam(connection),
+    //       name: node?.name,
+    //       containerNodePath: node?.id,
+    //     });
+    //   },
+    // });
   }
 
   private exportData(context: IMenuContext<ITableFooterMenuContext>) {
