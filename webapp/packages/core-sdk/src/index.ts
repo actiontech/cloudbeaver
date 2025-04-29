@@ -24,4 +24,5 @@ export * from './isObjectPropertyInfoStateEqual';
 export * from './sdk';
 export * from './ServerInternalError';
 export * from './ServiceError';
+export * from './LocalStorage';
 export { manifest as coreSDKManifest } from './manifest';

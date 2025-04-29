@@ -1,8 +1,9 @@
-import { makeObservable, observable } from 'mobx';
 import axios from 'axios';
+import { makeObservable, observable } from 'mobx';
 
 import { ConnectionExecutionContextService, ConnectionInfoResource, createConnectionParam } from '@cloudbeaver/core-connections';
 import { injectable } from '@cloudbeaver/core-di';
+import { getRecentlySelectedZone } from '@cloudbeaver/core-sdk';
 import { uuid } from '@cloudbeaver/core-utils';
 
 import type { ISqlEditorTabState } from '../../ISqlEditorTabState';
@@ -21,13 +22,13 @@ type AuditTaskDesc = {
   audit_level: string;
   exec_sql: string;
   audit_result: AuditResult[];
-}
+};
 
 type AuditResult = {
   level: string;
   message: string;
   rule_name: string;
-}
+};
 
 type AuditTaskRes = {
   code: number;
@@ -39,13 +40,12 @@ type AuditTaskDescRes = {
   code: number;
   data: AuditTaskDesc[];
   message: string;
-}
+};
 
 export type AuditTaskResult = {
-  taskInfo: AuditTask | null
-  taskDesc: AuditTaskDesc[] | null
-}
-
+  taskInfo: AuditTask | null;
+  taskDesc: AuditTaskDesc[] | null;
+};
 
 @injectable()
 export class SqlAuditService {
@@ -76,7 +76,7 @@ export class SqlAuditService {
     const connection = this.connectionInfoResource.get(createConnectionParam(contextInfo.projectId, contextInfo.connectionId));
     if (!connection) {
       console.error('audit connection is not provided');
-      return
+      return;
     }
 
     var task: AuditTaskResult = {
@@ -85,33 +85,32 @@ export class SqlAuditService {
     };
 
     try {
-      const split = connection.name.split(":", 2)
+      const split = connection.name.split(':', 2);
       if (split.length <= 1) {
-        return
+        return;
       }
 
       const { data, status } = await axios.post<AuditTaskRes>(
-        "/sqle/v1/projects/" + split[0] + "/tasks/audits",
-        { instance_name: split[1].trim(), instance_schema: contextInfo.defaultCatalog, sql: query},
+        '/sqle/v1/projects/' + split[0] + '/tasks/audits',
+        { instance_name: split[1].trim(), instance_schema: contextInfo.defaultCatalog, sql: query },
         {
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'multipart/form-data',
+            zone: getRecentlySelectedZone(),
           },
         },
       );
 
-      task.taskInfo = data.data
-  
-      console.log(JSON.stringify(data, null, 4));
-  
-      if (status != 200 || data.code != 0) {
-        console.error('audit failed, status=' + status + ", message: " + data.message);
-        return 
-      }
-  
-    } catch (error) {
+      task.taskInfo = data.data;
 
+      console.log(JSON.stringify(data, null, 4));
+
+      if (status != 200 || data.code != 0) {
+        console.error('audit failed, status=' + status + ', message: ' + data.message);
+        return;
+      }
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('error message: ', error.message);
         // return error.message;
@@ -123,22 +122,22 @@ export class SqlAuditService {
 
     try {
       const { data, status } = await axios.get<AuditTaskDescRes>(
-        "/sqle/v2/tasks/audits/"+ task.taskInfo?.task_id + "/sqls?page_index=1&page_size=100",
+        '/sqle/v2/tasks/audits/' + task.taskInfo?.task_id + '/sqls?page_index=1&page_size=100',
         {
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
+            zone: getRecentlySelectedZone(),
           },
-        }
+        },
       );
 
       console.log(JSON.stringify(data, null, 4));
 
       if (status != 200 || data.code != 0) {
-        console.error('audit failed, status=' + status + ", message: " + data.message);
-        return 
+        console.error('audit failed, status=' + status + ', message: ' + data.message);
+        return;
       }
-      task.taskDesc = data.data
-
+      task.taskDesc = data.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('error message: ', error.message);
@@ -154,9 +153,9 @@ export class SqlAuditService {
 
     this.auditData.set(tabId, task);
 
-    console.log(dataSource)
-    
-    console.log("audit: name[" + connection.name + "] sql["+ query +"], schema["+contextInfo.defaultCatalog+"]")
+    console.log(dataSource);
+
+    console.log('audit: name[' + connection.name + '] sql[' + query + '], schema[' + contextInfo.defaultCatalog + ']');
   }
 
   removeAuditTab(state: ISqlEditorTabState, tabId: string): void {

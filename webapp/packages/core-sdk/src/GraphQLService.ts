@@ -11,6 +11,7 @@ import { CustomGraphQLClient } from './CustomGraphQLClient';
 import { EnvironmentService } from './EnvironmentService';
 import { uploadDriverLibraryExtension } from './Extensions/uploadDriverLibraryExtension';
 import type { IResponseInterceptor } from './IResponseInterceptor';
+import { getRecentlySelectedZone } from './LocalStorage';
 import { getSdk } from './sdk';
 
 function extendedSDK(client: CustomGraphQLClient) {
@@ -30,7 +31,11 @@ export class GraphQLService {
 
   constructor(private readonly environmentService: EnvironmentService) {
     const gqlEndpoint = this.environmentService.gqlEndpoint;
-    this.client = new CustomGraphQLClient(gqlEndpoint);
+    this.client = new CustomGraphQLClient(gqlEndpoint, {
+      headers: {
+        zone: getRecentlySelectedZone(),
+      },
+    });
     this.sdk = extendedSDK(this.client);
   }
 
