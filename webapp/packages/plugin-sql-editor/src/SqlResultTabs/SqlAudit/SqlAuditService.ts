@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { makeObservable, observable } from 'mobx';
 
 import { ConnectionExecutionContextService, ConnectionInfoResource, createConnectionParam } from '@cloudbeaver/core-connections';
@@ -46,6 +46,33 @@ export type AuditTaskResult = {
   taskInfo: AuditTask | null;
   taskDesc: AuditTaskDesc[] | null;
 };
+
+const authInvalid = () => {
+  const currentSearch = window.location.search;
+
+  localStorage.removeItem('TOKEN');
+  const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
+  window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
+};
+
+const successFn = async (res: AxiosResponse<any, any>) => {
+  if (res.status === 401) {
+    authInvalid();
+  }
+  return res;
+};
+
+const errorFn = async (error: any) => {
+  if (error?.response?.status === 401) {
+    authInvalid();
+  }
+  return Promise.reject(error);
+};
+
+axios.interceptors.response.use(
+  res => successFn(res),
+  err => errorFn(err),
+);
 
 @injectable()
 export class SqlAuditService {
