@@ -23,6 +23,7 @@ interface IErrorDetailsHook {
   isOpen: boolean;
   open: () => void;
   refresh?: () => void;
+  errorCode?: number;
 }
 
 type HookType =
@@ -52,6 +53,7 @@ export function useErrorDetails(error: Error | null): HookType {
   const name = error?.name;
   const message = error?.message;
   const executionFailedMessage = (error as any)?.executionFailedMessage as string;
+  const errorCode = (error as any)?.errorCode as number;
 
   return {
     name,
@@ -63,5 +65,6 @@ export function useErrorDetails(error: Error | null): HookType {
     open,
     refresh: loadingError?.refresh,
     executionFailedMessage,
+    errorCode,
   };
 }
