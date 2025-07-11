@@ -6,7 +6,6 @@ import { ConnectionExecutionContextService, ConnectionInfoResource, createConnec
 import { injectable } from '@cloudbeaver/core-di';
 import { type CommonDialogService, DialogueStateResult } from '@cloudbeaver/core-dialogs';
 import { ENotificationType, type NotificationService } from '@cloudbeaver/core-events';
-import type { RouterService } from '@cloudbeaver/core-routing';
 import { getRecentlySelectedZone } from '@cloudbeaver/core-sdk';
 import { uuid } from '@cloudbeaver/core-utils';
 import { SessionExpiredDialog } from '@cloudbeaver/plugin-root';
@@ -62,7 +61,6 @@ export class SqlAuditService {
     private readonly connectionInfoResource: ConnectionInfoResource,
     private readonly commonDialogService: CommonDialogService,
     private readonly notificationService: NotificationService,
-    private readonly routerService: RouterService,
   ) {
     this.auditData = new Map();
 
@@ -90,6 +88,14 @@ export class SqlAuditService {
     return Promise.reject(error);
   };
 
+  private reload() {
+    const currentSearch = window.location.search;
+
+    localStorage.removeItem('TOKEN');
+    const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
+    window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
+  }
+
   private async handleSessionExpired(): Promise<void> {
     const state = await this.commonDialogService.open(SessionExpiredDialog, null);
 
@@ -98,7 +104,7 @@ export class SqlAuditService {
         () => ActionSnackbar,
         {
           actionText: 'ui_processing_reload',
-          onAction: () => this.routerService.reload(),
+          onAction: () => this.reload(),
         },
         { title: 'app_root_session_expired_title', persistent: true, type: ENotificationType.Error },
       );
