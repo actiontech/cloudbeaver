@@ -20,6 +20,7 @@ export const SessionExpiredDialog: DialogComponent<null, null> = observer(functi
     // routerService.reload();
     const currentSearch = window.location.search;
 
+    document.cookie = 'cb-session-id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     localStorage.removeItem('TOKEN');
     const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
     window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
