@@ -210,14 +210,14 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
   }, [navigationTabsService, sqlDataSourceService, commonDialogService, connectionInfo, sqlEditorNavigatorService]);
 
   useEffect(() => {
-    const SQL_CONTEXT_ERROR_CODE = 508;
+    const SQL_CONTEXT_ERROR_CODE = '508';
     if (errorInfo.error !== model.source.error) {
       errorInfo.error = model.source.error || null;
       errorInfo.display = !!model.source.error;
     }
 
     if (error.message) {
-      const isSqlContextError = /SQL context .* not found/i.test(error.message) || error.errorCode === SQL_CONTEXT_ERROR_CODE;
+      const isSqlContextError = error.errorCode === SQL_CONTEXT_ERROR_CODE || /SQL context .* not found/i.test(error.message);
       if (model.source.error && isSqlContextError) {
         handleReopenEditor();
       }
