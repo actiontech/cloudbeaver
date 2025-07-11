@@ -216,7 +216,7 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
       errorInfo.display = !!model.source.error;
     }
     console.log(error, model.source.error);
-    const isSqlContextError = error.errorCode === SQL_CONTEXT_ERROR_CODE || /SQL context .* not found/i.test(error.message);
+    const isSqlContextError = error.errorCode === SQL_CONTEXT_ERROR_CODE || /SQL context .* not found/i.test(error.message || '');
     if (isSqlContextError) {
       handleReopenEditor();
     }
