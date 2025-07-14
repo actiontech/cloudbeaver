@@ -1,10 +1,14 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { makeObservable, observable } from 'mobx';
 
+import { ActionSnackbar } from '@cloudbeaver/core-blocks';
 import { ConnectionExecutionContextService, ConnectionInfoResource, createConnectionParam } from '@cloudbeaver/core-connections';
 import { injectable } from '@cloudbeaver/core-di';
+import { CommonDialogService, DialogueStateResult } from '@cloudbeaver/core-dialogs';
+import { ENotificationType, NotificationService } from '@cloudbeaver/core-events';
 import { getRecentlySelectedZone } from '@cloudbeaver/core-sdk';
 import { uuid } from '@cloudbeaver/core-utils';
+import { SessionExpiredDialog } from '@cloudbeaver/plugin-root';
 
 import type { ISqlEditorTabState } from '../../ISqlEditorTabState';
 import { SqlDataSourceService } from '../../SqlDataSource/SqlDataSourceService';
@@ -55,12 +59,57 @@ export class SqlAuditService {
     private readonly connectionExecutionContextService: ConnectionExecutionContextService,
     private readonly sqlDataSourceService: SqlDataSourceService,
     private readonly connectionInfoResource: ConnectionInfoResource,
+    private readonly commonDialogService: CommonDialogService,
+    private readonly notificationService: NotificationService,
   ) {
     this.auditData = new Map();
 
     makeObservable(this, {
       auditData: observable,
     });
+
+    axios.interceptors.response.use(
+      res => this.successFn(res),
+      err => this.errorFn(err),
+    );
+  }
+
+  private successFn = async (res: AxiosResponse<any, any>) => {
+    if (res.status === 401) {
+      this.handleSessionExpired();
+    }
+    return res;
+  };
+
+  private errorFn = async (error: any) => {
+    if (error?.response?.status === 401) {
+      this.handleSessionExpired();
+    }
+    return Promise.reject(error);
+  };
+
+  private reload() {
+    const currentSearch = window.location.search;
+
+    document.cookie = 'cb-session-id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('TOKEN');
+    const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
+    window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
+  }
+
+  private async handleSessionExpired(): Promise<void> {
+    const state = await this.commonDialogService.open(SessionExpiredDialog, null);
+
+    if (state === DialogueStateResult.Rejected) {
+      this.notificationService.customNotification(
+        () => ActionSnackbar,
+        {
+          actionText: 'ui_processing_reload',
+          onAction: () => this.reload(),
+        },
+        { title: 'app_root_session_expired_title', persistent: true, type: ENotificationType.Error },
+      );
+    }
   }
 
   async audit(editorState: ISqlEditorTabState, query: string): Promise<void> {

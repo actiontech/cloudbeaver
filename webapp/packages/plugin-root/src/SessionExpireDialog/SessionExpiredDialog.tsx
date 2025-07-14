@@ -8,18 +8,22 @@
 import { observer } from 'mobx-react-lite';
 
 import { Button, s, useS, useTranslate } from '@cloudbeaver/core-blocks';
-import { useService } from '@cloudbeaver/core-di';
 import { CommonDialogBody, CommonDialogFooter, CommonDialogHeader, CommonDialogWrapper, DialogComponent } from '@cloudbeaver/core-dialogs';
-import { RouterService } from '@cloudbeaver/core-routing';
 
 import style from '../ServerNodeChangedDialog/ServerNodeChangedDialog.m.css';
 
 export const SessionExpiredDialog: DialogComponent<null, null> = observer(function SessionExpiredDialog({ rejectDialog }) {
   const styles = useS(style);
-  const routerService = useService(RouterService);
+  // const routerService = useService(RouterService);
   const translate = useTranslate();
   function reload() {
-    routerService.reload();
+    // routerService.reload();
+    const currentSearch = window.location.search;
+
+    document.cookie = 'cb-session-id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('TOKEN');
+    const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
+    window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
   }
 
   return (

@@ -49,4 +49,12 @@ export default [
   ['settings_data_editor_fetch_max_description', 'Maximum number of rows to fetch'],
   ['settings_data_editor_fetch_default_name', 'Default fetch size'],
   ['settings_data_editor_fetch_default_description', 'Default number of rows to fetch'],
+
+  ['plugin_data_viewer_sql_session_closed_title', 'SQL Execution Session Closed'],
+  [
+    'plugin_data_viewer_sql_session_closed_message',
+    'The current SQL execution session has been closed, possibly due to connection timeout or manual disconnection. You can reopen the SQL editor and retain the current query statement.',
+  ],
+  ['plugin_data_viewer_sql_session_closed_query_label', 'Current Query:'],
+  ['plugin_data_viewer_sql_session_closed_open_editor', 'Reopen Editor'],
 ];

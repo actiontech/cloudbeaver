@@ -49,4 +49,11 @@ export default [
   ['settings_data_editor_fetch_max_description', 'Maximum number of rows to fetch'],
   ['settings_data_editor_fetch_default_name', 'Default fetch size'],
   ['settings_data_editor_fetch_default_description', 'Default number of rows to fetch'],
+  ['plugin_data_viewer_sql_session_closed_title', 'SQL执行会话已关闭'],
+  [
+    'plugin_data_viewer_sql_session_closed_message',
+    '当前SQL执行会话已关闭，可能是由于连接超时或手动断开导致的。您可以重新打开SQL编辑器并保留当前的查询语句。',
+  ],
+  ['plugin_data_viewer_sql_session_closed_query_label', '当前查询语句：'],
+  ['plugin_data_viewer_sql_session_closed_open_editor', '重新打开编辑器'],
 ];

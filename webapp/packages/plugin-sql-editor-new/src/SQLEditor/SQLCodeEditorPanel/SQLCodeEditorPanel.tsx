@@ -27,7 +27,7 @@ import { useSQLCodeEditorPanel } from './useSQLCodeEditorPanel';
 
 interface ILocalSQLCodeEditorPanelState {
   selection: { from: number; to: number };
-};
+}
 export const SQLCodeEditorPanel: TabContainerPanelComponent<ISqlEditorModeProps> = observer(function SQLCodeEditorPanel({ data }) {
   const notificationService = useService(NotificationService);
   const navNodeManagerService = useService(NavNodeManagerService);
@@ -40,11 +40,31 @@ export const SQLCodeEditorPanel: TabContainerPanelComponent<ISqlEditorModeProps>
   const editor = useSQLCodeEditor(editorRef);
 
   useEffect(() => {
+    if (!editorRef?.view) {
+      return;
+    }
 
-    editorRef?.view?.dispatch({
-      selection: { anchor: localState.selection.from, head: localState.selection.to },
-      scrollIntoView: true,
-    });
+    const docLength = editorRef.view.state.doc.length;
+    const { from, to } = localState.selection;
+
+    // 验证选择范围是否超出文档长度
+    if (from > docLength || to > docLength) {
+      // 如果超出范围，重置选择到文档末尾
+      const safeSelection = { from: Math.min(from, docLength), to: Math.min(to, docLength) };
+
+      editorRef.view.dispatch({
+        selection: { anchor: safeSelection.from, head: safeSelection.to },
+        scrollIntoView: true,
+      });
+
+      // 更新 localState 以保持一致性
+      localState.selection = safeSelection;
+    } else {
+      editorRef.view.dispatch({
+        selection: { anchor: from, head: to },
+        scrollIntoView: true,
+      });
+    }
   }, [editorRef?.view, localState]);
 
   useEffect(() => {

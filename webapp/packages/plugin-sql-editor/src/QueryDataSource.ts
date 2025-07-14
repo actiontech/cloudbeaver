@@ -201,7 +201,6 @@ export class QueryDataSource<TOptions extends IDataQueryOptions = IDataQueryOpti
         dataFormat: this.dataFormat,
         readLogs: options.readLogs,
       });
-
       return taskInfo;
     });
 
