@@ -215,12 +215,11 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
       errorInfo.error = model.source.error || null;
       errorInfo.display = !!model.source.error;
     }
-    console.log(error, model.source.error);
     const isSqlContextError = error.errorCode === SQL_CONTEXT_ERROR_CODE || /SQL context .* not found/i.test(error.message || '');
     if (isSqlContextError) {
       handleReopenEditor();
     }
-  }, [error.message, handleReopenEditor, model.source.error, errorInfo]);
+  }, [error.message, handleReopenEditor, model.source.error, errorInfo, error.errorCode]);
 
   return styled(style)(
     <error {...use({ animated, collapsed: !errorInfo.display, errorHidden })} className={className}>
