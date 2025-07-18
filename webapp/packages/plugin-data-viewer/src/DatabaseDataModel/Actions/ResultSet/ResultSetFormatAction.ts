@@ -38,7 +38,7 @@ export class ResultSetFormatAction
   }
 
   getHeaders(): string[] {
-    return this.view.columns.map(column => column.name!).filter(name => name !== undefined);
+    return this.view.columns.map(column => column?.name).filter((name): name is string => name !== undefined && name !== null);
   }
 
   getLongestCells(offset = 0, count?: number): string[] {
