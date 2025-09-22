@@ -21,6 +21,7 @@
     "validate-dependencies": "core-cli-validate-dependencies"
   },
   "dependencies": {
+    "@cloudbeaver/core-authentication": "workspace:*",
     "@cloudbeaver/core-blocks": "workspace:*",
     "@cloudbeaver/core-client-activity": "workspace:*",
     "@cloudbeaver/core-di": "workspace:*",
@@ -36,6 +37,7 @@
     "@cloudbeaver/core-utils": "workspace:*",
     "@cloudbeaver/core-version": "workspace:*",
     "@dbeaver/ui-kit": "workspace:^",
+    "lz-string": "^1.5.0",
     "mobx": "^6",
     "mobx-react-lite": "^4",
     "react": "^19",

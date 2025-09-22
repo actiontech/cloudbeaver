@@ -8,6 +8,7 @@
 
 import './module.js';
 
+export { default as Watermark } from './Watermark/Watermark.js';
 export * from './AuthenticationProviderLoader.js';
 export * from './useAuthenticationAction.js';
 export * from './CommonDialog/CommonDialog/CommonDialogBody.js';

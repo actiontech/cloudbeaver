@@ -6,9 +6,10 @@
  * you may not use this file except in compliance with the License.
  */
 import { observer } from 'mobx-react-lite';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { decompressFromBase64 } from 'lz-string';
 
-import { DialogsPortal, Loader, s, useResource, useS } from '@cloudbeaver/core-blocks';
+import { DialogsPortal, Loader, s, useResource, useS, Watermark } from '@cloudbeaver/core-blocks';
 import { useService } from '@cloudbeaver/core-di';
 import { Notifications } from '@cloudbeaver/core-notifications';
 import { ProjectInfoResource } from '@cloudbeaver/core-projects';
@@ -18,6 +19,7 @@ import { ScreenService } from '@cloudbeaver/core-routing';
 import { ThemeService } from '@cloudbeaver/core-theming';
 import { DNDProvider } from '@cloudbeaver/core-ui';
 import { useAppVersion } from '@cloudbeaver/core-version';
+import { AuthInfoService } from '@cloudbeaver/core-authentication';
 
 import style from './Body.module.css';
 import { useAppHeight } from './useAppHeight.js';
@@ -25,6 +27,8 @@ import { useClientActivity } from './useClientActivity.js';
 import icons from '@dbeaver/ui-kit/assets/icons/icons.svg?raw';
 
 export const Body = observer(function Body() {
+  const [edition, setEdition] = useState();
+
   // const serverConfigLoader = useResource(Body, ServerConfigResource, undefined);
   const styles = useS(style);
   const themeService = useService(ThemeService);
@@ -33,6 +37,8 @@ export const Body = observer(function Body() {
   const screenService = useService(ScreenService);
   const Screen = screenService.screen?.component;
   const { backendVersion } = useAppVersion();
+  const authInfoService = useService(AuthInfoService);
+  const userInfo = authInfoService.userInfo;
 
   // TODO: must be loaded in place where it is used
   useResource(Body, ProjectInfoResource, CachedMapAllKey, { silent: true });
@@ -44,6 +50,20 @@ export const Body = observer(function Body() {
     }
     document.documentElement.dataset['backendVersion'] = backendVersion;
   });
+
+  useLayoutEffect(() => {
+    const channel = localStorage.getItem('DMS_CB_CHANNEL');
+    if (channel) {
+      try {
+        const json = JSON.parse(decompressFromBase64(channel));
+        if (json.type === 'sqle_edition') {
+          setEdition(json.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, []);
 
   useAppHeight();
   useClientActivity();
@@ -73,6 +93,10 @@ export const Body = observer(function Body() {
           </Loader>
           <div style={{ display: 'none' }} dangerouslySetInnerHTML={{ __html: icons }} />
         </div>
+
+        {userInfo && edition === 'ee' && (
+          <Watermark theme={userInfo.configurationParameters?.['app.theme']} text={userInfo.displayName || userInfo.userId} />
+        )}
       </Loader>
     </DNDProvider>
   );
