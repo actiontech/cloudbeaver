@@ -8,6 +8,7 @@
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
+import { compressToEncodedURIComponent } from 'lz-string';
 
 import { Button, IconOrImage, Placeholder, s, useErrorDetails, useObservableRef, useS, useStateDelay, useTranslate } from '@cloudbeaver/core-blocks';
 import { ServerErrorType, ServerInternalError } from '@cloudbeaver/core-sdk';
@@ -17,6 +18,9 @@ import { useService } from '@cloudbeaver/core-di';
 import type { IDatabaseDataModel } from '../DatabaseDataModel/IDatabaseDataModel.js';
 import { DataViewerService } from '../DataViewerService.js';
 import styles from './TableError.module.css';
+import { ConnectionSchemaManagerService } from '@cloudbeaver/plugin-datasource-context-switch';
+import { NavigationTabsService } from '@cloudbeaver/plugin-navigation-tabs';
+import { SqlDataSourceService } from '@cloudbeaver/plugin-sql-editor';
 
 interface Props {
   model: IDatabaseDataModel;
@@ -33,6 +37,11 @@ interface ErrorInfo {
 
 export const TableError = observer<Props>(function TableError({ model, loading, className }) {
   const translate = useTranslate();
+
+  const connectionSchemaManagerService = useService(ConnectionSchemaManagerService);
+  const sqlDataSourceService = useService(SqlDataSourceService);
+  const navigationTabsService = useService(NavigationTabsService);
+
   const style = useS(styles);
   const dataViewerService = useService(DataViewerService);
 
@@ -59,6 +68,24 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
 
   const errorHidden = errorInfo.error === null;
   const quote = internalServerError?.errorType === ServerErrorType.QUOTE_EXCEEDED;
+
+  const onCreateWorkflowNavigate = () => {
+    const [projectName, instanceName] = connectionSchemaManagerService.currentConnection?.name.split(':') ?? [];
+    const schema = connectionSchemaManagerService.currentObjectCatalog?.name;
+    const sql = sqlDataSourceService.get(navigationTabsService.getView()?.context.id ?? '')?.script;
+
+    const data = {
+      instanceName,
+      schema,
+      sql,
+    };
+
+    window.open(
+      `/transit?from=cloudbeaver&to=create_workflow&project_name=${projectName}&compression_data=${compressToEncodedURIComponent(
+        JSON.stringify(data),
+      )}`,
+    );
+  };
 
   let icon = '/icons/error_icon.svg';
 
@@ -110,6 +137,9 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
         )}
         <Button className={s(style, { button: true })} type="button" onClick={onRetry}>
           {translate('ui_processing_retry')}
+        </Button>
+        <Button className={s(style, { button: true })} type="button" onClick={onCreateWorkflowNavigate}>
+          {translate('ui_create_workflow')}
         </Button>
       </div>
     </div>
