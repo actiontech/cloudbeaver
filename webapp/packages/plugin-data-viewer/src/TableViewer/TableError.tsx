@@ -7,7 +7,7 @@
  */
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { compressToEncodedURIComponent } from 'lz-string';
 
 import { Button, IconOrImage, Placeholder, s, useErrorDetails, useObservableRef, useS, useStateDelay, useTranslate } from '@cloudbeaver/core-blocks';
@@ -20,7 +20,11 @@ import { DataViewerService } from '../DataViewerService.js';
 import styles from './TableError.module.css';
 import { ConnectionSchemaManagerService } from '@cloudbeaver/plugin-datasource-context-switch';
 import { NavigationTabsService } from '@cloudbeaver/plugin-navigation-tabs';
-import { SqlDataSourceService } from '@cloudbeaver/plugin-sql-editor';
+import { ConnectionInfoResource, createConnectionParam } from '@cloudbeaver/core-connections';
+import { CommonDialogService, DialogueStateResult } from '@cloudbeaver/core-dialogs';
+import { LocalStorageSqlDataSource, SqlDataSourceService } from '@cloudbeaver/plugin-sql-editor';
+import { isSQLEditorTab, SqlEditorNavigatorService } from '@cloudbeaver/plugin-sql-editor-navigation-tab';
+import { SqlEditorSessionClosedDialog } from './SqlEditorSessionClosedDialog.js';
 
 interface Props {
   model: IDatabaseDataModel;
@@ -41,6 +45,9 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
   const connectionSchemaManagerService = useService(ConnectionSchemaManagerService);
   const sqlDataSourceService = useService(SqlDataSourceService);
   const navigationTabsService = useService(NavigationTabsService);
+  const commonDialogService = useService(CommonDialogService);
+  const sqlEditorNavigatorService = useService(SqlEditorNavigatorService);
+  const connectionInfo = useService(ConnectionInfoResource);
 
   const style = useS(styles);
   const dataViewerService = useService(DataViewerService);
@@ -112,6 +119,48 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
       errorInfo.display = !!model.source.error;
     }
   }, [errorInfo, model.source.error]);
+
+  const handleReopenEditor = useCallback(async () => {
+    const contextId = navigationTabsService.getView()?.context.id ?? '';
+    const dataSource = sqlDataSourceService.get(contextId);
+
+    if (dataSource) {
+      const query = dataSource.script || '';
+      const shouldReopen = await commonDialogService.open(SqlEditorSessionClosedDialog, { query });
+      if (shouldReopen === true || shouldReopen === DialogueStateResult.Resolved) {
+        const relatedTab = navigationTabsService.findTab(isSQLEditorTab(tab => tab.id === contextId));
+        if (relatedTab) {
+          await navigationTabsService.closeTab(relatedTab.id, true);
+
+          const executionContext = dataSource?.executionContext;
+
+          if (executionContext) {
+            const connection = executionContext
+              ? connectionInfo.get(createConnectionParam(executionContext.projectId, executionContext.connectionId))
+              : undefined;
+
+            await sqlEditorNavigatorService.openNewEditor({
+              dataSourceKey: LocalStorageSqlDataSource.key,
+              connectionKey: connection && createConnectionParam(connection),
+              query: query,
+            });
+          }
+        }
+      }
+    }
+  }, [navigationTabsService, sqlDataSourceService, commonDialogService, connectionInfo, sqlEditorNavigatorService]);
+
+  useEffect(() => {
+    const SQL_CONTEXT_ERROR_CODE = '508';
+    if (errorInfo.error !== model.source.error) {
+      errorInfo.error = model.source.error || null;
+      errorInfo.display = !!model.source.error;
+    }
+    const isSqlContextError = error.errorCode === SQL_CONTEXT_ERROR_CODE || /SQL context .* not found/i.test(error.message || '');
+    if (isSqlContextError) {
+      handleReopenEditor();
+    }
+  }, [error.message, handleReopenEditor, model.source.error, errorInfo]);
 
   return (
     <div

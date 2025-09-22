@@ -29,6 +29,16 @@ export class SessionExpiredDialogBootstrap extends Bootstrap {
     this.sessionExpireService.onSessionExpire.addPostHandler(this.handleSessionExpired.bind(this));
   }
 
+  private reload() {
+    const currentSearch = window.location.search;
+
+    localStorage.removeItem('TOKEN');
+    // 删除 名为cb-session-id 的 cookie
+    document.cookie = 'cb-session-id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    const DMS_REDIRECT_KEY_PARAMS_NAME = 'target';
+    window.location.href = `/login?${DMS_REDIRECT_KEY_PARAMS_NAME}=${encodeURIComponent('/project/700300/cloud-beaver' + currentSearch)}`;
+  }
+
   private async handleSessionExpired(): Promise<void> {
     const state = await this.commonDialogService.open(SessionExpiredDialog, null);
 
@@ -37,7 +47,7 @@ export class SessionExpiredDialogBootstrap extends Bootstrap {
         () => ActionSnackbar,
         {
           actionText: 'ui_processing_reload',
-          onAction: () => this.routerService.reload(),
+          onAction: () => this.reload(),
         },
         { title: 'app_root_session_expired_title', persistent: true, type: ENotificationType.Error },
       );

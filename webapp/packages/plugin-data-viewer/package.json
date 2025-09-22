@@ -45,6 +45,7 @@
     "@cloudbeaver/plugin-navigation-tabs": "workspace:*",
     "@cloudbeaver/plugin-object-viewer": "workspace:*",
     "@cloudbeaver/plugin-sql-editor": "workspace:*",
+    "@cloudbeaver/plugin-sql-editor-navigation-tab": "workspace:*",
     "@dbeaver/js-helpers": "workspace:^",
     "@dbeaver/result-set-api": "workspace:^",
     "lz-string": "1.5.0",

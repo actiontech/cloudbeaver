@@ -2908,6 +2908,7 @@ __metadata:
     "@cloudbeaver/plugin-navigation-tabs": "workspace:*"
     "@cloudbeaver/plugin-object-viewer": "workspace:*"
     "@cloudbeaver/plugin-sql-editor": "workspace:*"
+    "@cloudbeaver/plugin-sql-editor-navigation-tab": "workspace:*"
     "@cloudbeaver/tsconfig": "workspace:*"
     "@dbeaver/cli": "workspace:*"
     "@dbeaver/js-helpers": "workspace:^"
