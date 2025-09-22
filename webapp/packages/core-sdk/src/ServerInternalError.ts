@@ -28,6 +28,6 @@ export class ServerInternalError extends DetailsError implements ServerError {
   }
 
   override hasDetails(): boolean {
-    return this.stack !== undefined && this.stack.length > 0 && this.errorType !== ServerErrorType.QUOTE_EXCEEDED;
+    return this.stack !== undefined && (this.stack?.length ?? 0) > 0 && this.errorType !== ServerErrorType.QUOTE_EXCEEDED;
   }
 }

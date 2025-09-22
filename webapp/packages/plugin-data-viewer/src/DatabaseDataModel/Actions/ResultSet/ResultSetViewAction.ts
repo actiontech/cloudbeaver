@@ -39,7 +39,7 @@ export class ResultSetViewAction extends DatabaseDataAction<any, IDatabaseResult
   }
 
   get columns(): SqlResultColumn[] {
-    return this.columnsOrder.map(i => this.data.columns[i]!);
+    return this.columnsOrder.map(i => this.data.columns[i]).filter(column => column !== undefined);
   }
 
   private columnsOrder: number[] = [];

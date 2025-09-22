@@ -160,7 +160,7 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     if (isSqlContextError) {
       handleReopenEditor();
     }
-  }, [error.message, handleReopenEditor, model.source.error, errorInfo]);
+  }, [error.message, handleReopenEditor, model.source.error, errorInfo, error.errorCode]);
 
   return (
     <div
