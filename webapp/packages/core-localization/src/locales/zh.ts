@@ -32,6 +32,7 @@ export default [
   ['ui_minute_third_form', '{arg:interval} 分钟'],
   ['ui_custom', '个性化'],
   ['ui_configure', '配置'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_apply', '应用'],
   ['ui_replace', '替换'],
   ['ui_cancel', '取消'],

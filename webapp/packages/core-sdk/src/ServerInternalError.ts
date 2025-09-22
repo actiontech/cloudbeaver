@@ -24,6 +24,7 @@ export class ServerInternalError extends DetailsError implements ServerError {
     this.errorCode = error.errorCode;
     this.errorType = error.errorType as ServerErrorType;
     this.causedBy = error.causedBy;
+    (this as any).execution_failed_message = (error as any).execution_failed_message;
   }
 
   override hasDetails(): boolean {

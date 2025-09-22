@@ -122,7 +122,12 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     >
       <div className={s(style, { errorBody: true })}>
         <IconOrImage className={s(style, { iconOrImage: true })} icon={icon} title={error.message} onClick={() => errorInfo.show()} />
-        <div className={s(style, { errorMessage: true })}>{error.message}</div>
+        <div>
+          <div className={s(style, { errorMessage: true })}>{error.message}</div>
+          {error.executionFailedMessage && (
+            <div className={s(style, { errorSubMessage: true })}>{`${translate('ui_audit_error_tips')}：${error.executionFailedMessage}`}</div>
+          )}
+        </div>
       </div>
       <div className={s(style, { controls: true })}>
         <Placeholder container={dataViewerService.errorActionsContainer} model={model} />

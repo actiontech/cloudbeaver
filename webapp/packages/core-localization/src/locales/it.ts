@@ -30,6 +30,7 @@ export default [
   ['ui_minute_second_form', '{arg:interval} minutes'],
   ['ui_minute_third_form', '{arg:interval} minutes'],
   ['ui_custom', 'Custom'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_configure', 'Configure'],
   ['ui_apply', 'Applica'],
   ['ui_replace', 'Sostituisci'],

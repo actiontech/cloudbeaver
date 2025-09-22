@@ -35,6 +35,7 @@ export default [
   ['ui_custom', 'Custom'],
   ['ui_configure', 'Configure'],
   ['ui_apply', 'Apply'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_replace', 'Replace'],
   ['ui_cancel', 'Cancel'],
   ['ui_reject', 'Reject'],

@@ -29,6 +29,7 @@ export default [
   ['ui_minute_second_form', '{arg:interval} минуты'],
   ['ui_minute_third_form', '{arg:interval} минут'],
   ['ui_custom', 'Настроить'],
+  ['ui_audit_error_tips', '审核异常'],
   ['ui_configure', 'Настроить'],
   ['ui_apply', 'Применить'],
   ['ui_replace', 'Заменить'],

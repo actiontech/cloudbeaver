@@ -33,6 +33,11 @@
 .errorMessage {
   white-space: pre-wrap;
 }
+.errorSubMessage {
+  display: block;
+  font-size: 0.9em;
+  margin-top: 8px;
+}
 .iconOrImage {
   width: 40px;
   height: 40px;

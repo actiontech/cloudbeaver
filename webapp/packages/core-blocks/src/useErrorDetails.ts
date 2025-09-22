@@ -19,6 +19,7 @@ interface IErrorDetailsHook {
   name?: string;
   message?: string;
   error: Error | string | null;
+  executionFailedMessage?: string;
   details?: DetailsError;
   hasDetails: boolean;
   isOpen: boolean;
@@ -53,6 +54,7 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
   };
   const name = typeof error === 'string' ? translate('core_blocks_exception_message_error_message') : error?.name;
   const message = typeof error === 'string' ? error : error?.message;
+  const executionFailedMessage = (error as any)?.execution_failed_message as string;
 
   return {
     name,
@@ -63,5 +65,6 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
     isOpen,
     open,
     refresh: loadingError?.refresh,
+    executionFailedMessage,
   };
 }
