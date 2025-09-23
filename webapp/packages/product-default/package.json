@@ -20,12 +20,15 @@
     "extends @cloudbeaver/browserslist-config"
   ],
   "scripts": {
-    "build": "rimraf --glob dist && yarn workspaces foreach -Ap --include '@cloudbeaver/core-sdk' run gql:gen && yarn tsc -b",
-    "bundle": "yarn build && vite build --mode production",
+    "build": "node cycle-fix.js remove && rimraf --glob dist && yarn workspaces foreach -Ap --include '@cloudbeaver/core-sdk' run gql:gen && yarn tsc -b && node cycle-fix.js restore",
+    "bundle": "yarn build && node cycle-fix.js remove && vite build --mode production && node cycle-fix.js restore",
     "dev": "yarn build && concurrently -P -k \"yarn workspaces foreach -Ap --include '@cloudbeaver/core-sdk' run gql:gen:dev\" \"vite {@}\"",
     "lint": "eslint ./src/ --ext .ts,.tsx",
     "version:set": "yarn core-cli-set-version",
-    "validate-dependencies": "core-cli-validate-dependencies"
+    "validate-dependencies": "core-cli-validate-dependencies",
+    "cycle-fix:remove": "node cycle-fix.js remove",
+    "cycle-fix:restore": "node cycle-fix.js restore",
+    "cycle-fix:cleanup": "node cycle-fix.js cleanup"
   },
   "dependencies": {
     "@cloudbeaver/core-browser": "workspace:*",

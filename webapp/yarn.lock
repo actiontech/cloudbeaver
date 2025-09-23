@@ -9448,7 +9448,6 @@ __metadata:
     concurrently: "npm:^9"
     eslint: "npm:^9.30.1"
     happy-dom: "npm:^18"
-    lz-string: "npm:1.5.0"
     mobx: "npm:^6"
     mobx-react-lite: "npm:^4"
     msw: "npm:^2"

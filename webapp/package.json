@@ -54,8 +54,5 @@
     "typescript-plugin-css-modules": "^5",
     "vitest": "^3"
   },
-  "packageManager": "yarn@4.9.2",
-  "dependencies": {
-    "lz-string": "1.5.0"
-  }
+  "packageManager": "yarn@4.9.2"
 }

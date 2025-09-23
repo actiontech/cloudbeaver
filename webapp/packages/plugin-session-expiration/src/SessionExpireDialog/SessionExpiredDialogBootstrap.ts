@@ -10,14 +10,12 @@ import { Bootstrap, injectable } from '@cloudbeaver/core-di';
 import { CommonDialogService, DialogueStateResult } from '@cloudbeaver/core-dialogs';
 import { ENotificationType, NotificationService } from '@cloudbeaver/core-events';
 import { SessionExpireService } from '@cloudbeaver/core-root';
-import { RouterService } from '@cloudbeaver/core-routing';
 
 import { SessionExpiredDialog } from './SessionExpiredDialog.js';
 
-@injectable(() => [RouterService, NotificationService, CommonDialogService, SessionExpireService])
+@injectable(() => [NotificationService, CommonDialogService, SessionExpireService])
 export class SessionExpiredDialogBootstrap extends Bootstrap {
   constructor(
-    private readonly routerService: RouterService,
     private readonly notificationService: NotificationService,
     private readonly commonDialogService: CommonDialogService,
     private readonly sessionExpireService: SessionExpireService,
