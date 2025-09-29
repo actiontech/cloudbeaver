@@ -123,7 +123,7 @@ public class CBEmbeddedSecurityController<T extends ServletAuthApplication>
     // Users
 
     /**
-     * Creates user. Saves user id in database in lower-case.
+     * Creates user. Saves user id in database as provided.
      */
     @Override
     public void createUser(
@@ -132,7 +132,6 @@ public class CBEmbeddedSecurityController<T extends ServletAuthApplication>
         boolean enabled,
         @Nullable String defaultAuthRole
     ) throws DBException {
-        userId = userId.toLowerCase(); // creating new users only with lowercase
         validateAndCreateUser(userId, metaParameters, enabled, defaultAuthRole);
     }
 
@@ -211,15 +210,13 @@ public class CBEmbeddedSecurityController<T extends ServletAuthApplication>
             if (CommonUtils.isNotEmpty(metaParameters.get(SMStandardMeta.META_USER_ID))) {
                 userId = metaParameters.get(SMStandardMeta.META_USER_ID);
             }
-            for (String possibleUserId : List.of(userId, userId.toLowerCase())) {
-                if (isSubjectExists(possibleUserId)) {
-                    log.info("User already exist : " + possibleUserId);
-                    setUserAuthRole(connection, possibleUserId, authRole);
-                    enableUser(connection, possibleUserId, true, null, null);
-                    continue outer;
-                }
+            if (isSubjectExists(userId)) {
+                log.info("User already exist : " + userId);
+                setUserAuthRole(connection, userId, authRole);
+                enableUser(connection, userId, true, null, null);
+                continue;
             }
-            insertUser(connection, userId.toLowerCase(), metaParameters, true, authRole);
+            insertUser(connection, userId, metaParameters, true, authRole);
         }
     }
 
@@ -1291,7 +1288,6 @@ public class CBEmbeddedSecurityController<T extends ServletAuthApplication>
         if (CommonUtils.isEmpty(teamId)) {
             throw new DBCException("Empty team name is not allowed");
         }
-        teamId = teamId.toLowerCase();
         if (isSubjectExists(teamId)) {
             throw new DBCException("User or team '" + teamId + "' already exists");
         }
