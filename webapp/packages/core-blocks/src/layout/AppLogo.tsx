@@ -46,7 +46,12 @@ interface Props {
 
 export const AppLogo: React.FC<Props> = function AppLogo({ title, onClick }) {
   return styled(styles)(
-    <logo title={title} onClick={onClick}>
+    <logo
+      title={title}
+      onClick={() => {
+        window.location.href = `${location.origin}?from=odc`;
+      }}
+    >
       <IconOrImage icon="/icons/logo.svg" {...use({ primary: true })} />
       <IconOrImage icon="/icons/logo_sm.svg" {...use({ small: true })} />
     </logo>,
