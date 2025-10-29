@@ -50,7 +50,13 @@ export const SqlEditorSessionClosedDialog: DialogComponent<SqlEditorSessionClose
           <Translate token="ui_processing_cancel" />
         </Button>
         <Fill />
-        <Button type="button" onClick={() => resolveDialog(true)}>
+        <Button
+          type="button"
+          onClick={() => {
+            resolveDialog(true);
+            window.location.reload();
+          }}
+        >
           <Translate token="plugin_data_viewer_sql_session_closed_open_editor" />
         </Button>
       </CommonDialogFooter>
