@@ -14,7 +14,7 @@
         <resource name="drivers/jaybird"/>
         <resource name="drivers/h2"/>
         <resource name="drivers/h2_v2"/>
-        <resource name="drivers/hive"/>
+        <resource name="drivers/hive4"/>
         <resource name="drivers/sqlite/xerial"/>
         <resource name="drivers/mssql/new"/>
         <resource name="drivers/trino"/>
