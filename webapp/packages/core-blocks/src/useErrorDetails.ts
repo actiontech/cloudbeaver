@@ -61,11 +61,11 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
   let workflowId: string | undefined;
 
   if (typeof message === 'string') {
-    const match = message.match(/WorkflowID:(\d+)/);
+    const match = message.match(/workflow_id:(\d+)/);
 
     if (match) {
       workflowId = match[1];
-      message = message.replace(/WorkflowID:\d+,?\s*/g, '').trim();
+      message = message.replace(/workflow_id:\d+,?\s*/g, '').trim();
     }
   }
 
