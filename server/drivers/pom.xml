@@ -23,6 +23,7 @@
         <module>duckdb</module>
         <module>h2</module>
         <module>h2_v2</module>
+        <module>hive2</module>
         <module>hive4</module>
         <module>jaybird</module>
         <module>kyuubi</module>
