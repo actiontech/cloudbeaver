@@ -26,6 +26,7 @@ interface IErrorDetailsHook {
   open: () => void;
   refresh?: () => void;
   errorCode?: string;
+  workflowId?: string;
 }
 
 type HookType =
@@ -54,9 +55,19 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
     }
   };
   const name = typeof error === 'string' ? translate('core_blocks_exception_message_error_message') : error?.name;
-  const message = typeof error === 'string' ? error : error?.message;
+  let message = (typeof error === 'string' ? error : error?.message) ?? undefined;
   const executionFailedMessage = (error as any)?.execution_failed_message as string;
   const errorCode = (error as any)?.errorCode as string;
+  let workflowId: string | undefined;
+
+  if (typeof message === 'string') {
+    const match = message.match(/workflow_id:(\d+)/);
+
+    if (match) {
+      workflowId = match[1];
+      message = message.replace(/workflow_id:\d+,?\s*/g, '').trim();
+    }
+  }
 
   return {
     name,
@@ -69,5 +80,6 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
     refresh: loadingError?.refresh,
     executionFailedMessage,
     errorCode,
+    workflowId,
   };
 }
