@@ -163,7 +163,8 @@ public class WebServiceAdmin implements DBWServiceAdmin {
         if (userName.isEmpty()) {
             throw new DBWebException("Empty user name");
         }
-        String userId = userName.toLowerCase();
+//        String userId = userName.toLowerCase();
+        String userId = userName;
         try {
             GeneralUtils.validateResourceNameUnconditionally(userId);
         } catch (DBException e) {

@@ -19,7 +19,13 @@ interface Props {
 export const AppLogo: React.FC<Props> = function AppLogo({ title, onClick, iconSrc = '/icons/logo_sm.svg' }) {
   const style = useS(styles);
   return (
-    <div tabIndex={0} className={s(style, { container: true, active: onClick !== undefined })} onClick={onClick}>
+    <div
+      tabIndex={0}
+      className={s(style, { container: true, active: onClick !== undefined })}
+      onClick={() => {
+        window.location.href = `${location.origin}?from=odc`;
+      }}
+    >
       <IconOrImage title={title} className={s(style, { logo: true })} icon={iconSrc} />
     </div>
   );

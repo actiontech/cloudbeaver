@@ -44,6 +44,8 @@ export class AsyncTask {
   private readonly init: () => Promise<AsyncTaskInfo>;
   private readonly cancel: (id: string) => Promise<void>;
   private initPromise: Promise<void> | null;
+  private pollingTimer: ReturnType<typeof setInterval> | null;
+  private pollingGetter: ((taskId: string) => Promise<AsyncTaskInfo>) | null;
 
   constructor(init: () => Promise<AsyncTaskInfo>, cancel: (id: string) => Promise<void>) {
     this._id = uuid();
@@ -53,6 +55,8 @@ export class AsyncTask {
     this.updatingAsync = false;
     this.taskInfo = null;
     this.initPromise = null;
+    this.pollingTimer = null;
+    this.pollingGetter = null;
     this.onStatusChange = new SyncExecutor();
 
     this.innerPromise = new Promise((resolve, reject) => {
@@ -118,6 +122,8 @@ export class AsyncTask {
     }
 
     this._cancelled = true;
+    // 停止轮询
+    this.stopPolling();
     try {
       await this.cancelTask();
     } catch (exception: any) {
@@ -137,6 +143,8 @@ export class AsyncTask {
     this.taskInfo = info;
 
     if (!info.running) {
+      // 任务完成，停止轮询
+      this.stopPolling();
       if (info.error) {
         this.reject(new ServerInternalError(info.error));
       } else {
@@ -149,6 +157,66 @@ export class AsyncTask {
   private async cancelTask(): Promise<void> {
     if (this.info) {
       await this.cancel(this.info.id);
+    }
+  }
+
+  /**
+   * 启动轮询机制，作为 WebSocket 通知的降级方案
+   * @param getter 用于获取任务信息的函数
+   * @param interval 轮询间隔（毫秒），默认 1000ms
+   */
+  startPolling(getter: (taskId: string) => Promise<AsyncTaskInfo>, interval: number = 1000): void {
+    // 如果任务已经完成或已取消，不启动轮询
+    if (!this.pending || this._cancelled) {
+      return;
+    }
+
+    // 如果已经有轮询在运行，先停止
+    this.stopPolling();
+
+    this.pollingGetter = getter;
+
+    // 立即执行一次检查
+    this.pollOnce();
+
+    // 设置定时轮询
+    this.pollingTimer = setInterval(() => {
+      this.pollOnce();
+    }, interval);
+  }
+
+  /**
+   * 停止轮询
+   */
+  stopPolling(): void {
+    if (this.pollingTimer) {
+      clearInterval(this.pollingTimer);
+      this.pollingTimer = null;
+    }
+    this.pollingGetter = null;
+  }
+
+  /**
+   * 执行一次轮询检查
+   */
+  private async pollOnce(): Promise<void> {
+    // 如果任务已完成、已取消或没有轮询 getter，不执行
+    if (!this.pending || this._cancelled || !this.pollingGetter || !this.taskInfo) {
+      return;
+    }
+
+    // 如果正在更新，跳过本次轮询
+    if (this.updatingAsync) {
+      return;
+    }
+
+    try {
+      const info = await this.pollingGetter(this.taskInfo.id);
+      await this.updateInfoAsync(() => Promise.resolve(info));
+    } catch {
+      // 轮询失败不影响主流程，静默处理
+      // 如果 WebSocket 正常工作，会通过 WebSocket 通知完成任务
+      // 如果 WebSocket 连接中断，下次轮询会继续尝试
     }
   }
 }
