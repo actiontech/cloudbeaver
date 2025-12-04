@@ -56,7 +56,7 @@ export function useErrorDetails(error: IErrorDetailsHook['error']): HookType {
   };
   const name = typeof error === 'string' ? translate('core_blocks_exception_message_error_message') : error?.name;
   let message = (typeof error === 'string' ? error : error?.message) ?? undefined;
-  const executionFailedMessage = (error as any)?.execution_failed_message as string;
+  const executionFailedMessage = (error as any)?.executionFailedMessage as string;
   const errorCode = (error as any)?.errorCode as string;
   let workflowId: string | undefined;
 
