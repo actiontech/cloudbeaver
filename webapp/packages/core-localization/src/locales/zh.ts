@@ -14,6 +14,7 @@ export default [
   ['ui_processing_cancel', '取消'],
   ['ui_create_workflow', '发起变更工单'],
   ['ui_still_execute', '仍要执行'],
+  ['ui_workflow_detail', '工单详情'],
   ['ui_processing_canceling', '取消中...'],
   ['ui_processing_canceled', '已取消'],
   ['ui_processing_retry', '重试'],

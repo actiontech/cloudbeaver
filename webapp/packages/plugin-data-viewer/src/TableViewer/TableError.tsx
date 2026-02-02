@@ -39,6 +39,8 @@ interface ErrorInfo {
   show: () => void;
 }
 
+const WORKFLOW_EXEC_SUCCESS_ERROR_CODE = 'workflow_success';
+
 export const TableError = observer<Props>(function TableError({ model, loading, className }) {
   const translate = useTranslate();
 
@@ -68,7 +70,6 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     },
     false,
   );
-
   const internalServerError = errorOf(model.source.error, ServerInternalError);
   const error = useErrorDetails(model.source.error);
   const animated = useStateDelay(!!errorInfo.error && !loading, 1);
@@ -94,10 +95,20 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     );
   };
 
+  const onWorkflowDetailNavigate = (workflowId: string) => {
+    const [projectName] = connectionSchemaManagerService.currentConnection?.name.split(':') ?? [];
+
+    window.open(`/transit?from=cloudbeaver&to=workflow_detail&workflow_id=${workflowId}&project_name=${projectName}`);
+  };
+
   let icon = '/icons/error_icon.svg';
 
   if (quote) {
     icon = '/icons/info_icon.svg';
+  }
+
+  if (error.errorCode === WORKFLOW_EXEC_SUCCESS_ERROR_CODE) {
+    icon = '/icons/success_icon.svg';
   }
 
   let onRetry = () => model.retry();
@@ -151,7 +162,7 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
   }, [navigationTabsService, sqlDataSourceService, commonDialogService, connectionInfo, sqlEditorNavigatorService]);
 
   const onStillExecute = useCallback(async () => {
-    await (model.source as QueryDataSource).requestWithExecuteAnyway();
+    await (model.source as unknown as QueryDataSource).requestWithExecuteAnyway();
   }, [model]);
 
   useEffect(() => {
@@ -180,6 +191,11 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
           {error.executionFailedMessage && (
             <div className={s(style, { errorSubMessage: true })}>{`${translate('ui_audit_error_tips')}：${error.executionFailedMessage}`}</div>
           )}
+          {error.workflowId && (
+            <div className={s(style, { errorSubMessage: true })}>
+              {translate('ui_workflow_id')}: {error.workflowId}
+            </div>
+          )}
         </div>
       </div>
       <div className={s(style, { controls: true })}>
@@ -193,12 +209,19 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
             {translate('ui_errors_details')}
           </Button>
         )}
+
         <Button className={s(style, { button: true })} type="button" onClick={onRetry}>
           {translate('ui_processing_retry')}
         </Button>
-        <Button className={s(style, { button: true })} type="button" onClick={onCreateWorkflowNavigate}>
-          {translate('ui_create_workflow')}
-        </Button>
+        {error.workflowId ? (
+          <Button className={s(style, { button: true })} type="button" onClick={() => onWorkflowDetailNavigate(error.workflowId!)}>
+            {translate('ui_workflow_detail')}
+          </Button>
+        ) : (
+          <Button className={s(style, { button: true })} type="button" onClick={onCreateWorkflowNavigate}>
+            {translate('ui_create_workflow')}
+          </Button>
+        )}
         <Button className={s(style, { button: true })} type="button" onClick={onStillExecute}>
           {translate('ui_still_execute')}
         </Button>

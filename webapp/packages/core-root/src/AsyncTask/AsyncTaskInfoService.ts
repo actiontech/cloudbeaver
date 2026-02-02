@@ -112,6 +112,21 @@ export class AsyncTaskInfoService extends Disposable {
       await task.run();
     }
 
+    // 如果任务还在运行，启动轮询作为 WebSocket 的降级方案
+    // 这样可以确保即使 WebSocket 连接中断，也能通过轮询获取结果
+    if (task.pending && task.info) {
+      task.startPolling(
+        async (taskId: string) => {
+          const { taskInfo } = await this.graphQLService.sdk.getAsyncTaskInfo({
+            taskId,
+            removeOnFinish: false,
+          });
+          return taskInfo;
+        },
+        1000, // 轮询间隔 1 秒
+      );
+    }
+
     return task.promise;
   }
 
@@ -125,6 +140,10 @@ export class AsyncTaskInfoService extends Disposable {
     if (task.pending) {
       throw new Error('Cant remove unfinished task');
     }
+
+    // 停止轮询
+    task.stopPolling();
+
     this.tasks.delete(task.id);
     if (task.info) {
       this.taskIdAliases.delete(task.info.id);
