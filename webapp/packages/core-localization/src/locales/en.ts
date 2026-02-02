@@ -14,6 +14,7 @@ export default [
   ['ui_processing_cancel', 'Cancel'],
   ['ui_processing_canceling', 'Cancelling...'],
   ['ui_create_workflow', 'Create Workflow'],
+  ['ui_still_execute', 'Execute Anyway'],
   ['ui_processing_canceled', 'Canceled'],
   ['ui_processing_reload', 'Reload'],
   ['ui_processing_retry', 'Retry'],

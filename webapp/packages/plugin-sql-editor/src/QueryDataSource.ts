@@ -41,6 +41,8 @@ export interface IQueryRequestInfo extends IRequestInfo {
 export class QueryDataSource<TOptions extends IDataQueryOptions = IDataQueryOptions> extends ResultSetDataSource<TOptions> {
   currentTask: ITask<SqlExecuteInfo> | null;
   override requestInfo: IQueryRequestInfo;
+  /** When true, passes isExecuteAnyway to the API for re-execution despite previous errors */
+  executeAnyway = false;
 
   override get canCancel(): boolean {
     return this.currentTask?.cancellable || false;
@@ -175,6 +177,16 @@ export class QueryDataSource<TOptions extends IDataQueryOptions = IDataQueryOpti
     return this;
   }
 
+  /** Re-execute SQL with isExecuteAnyway=true, bypassing error state */
+  async requestWithExecuteAnyway(): Promise<void> {
+    this.executeAnyway = true;
+    try {
+      await this.requestData();
+    } finally {
+      this.executeAnyway = false;
+    }
+  }
+
   async request(prevResults: IDatabaseResultSet[]): Promise<IDatabaseResultSet[]> {
     const options = this.options;
     const executionContext = this.executionContext;
@@ -241,7 +253,8 @@ export class QueryDataSource<TOptions extends IDataQueryOptions = IDataQueryOpti
       },
       dataFormat: this.dataFormat,
       readLogs: options.readLogs,
-    });
+      isExecuteAnyway: this.executeAnyway || undefined,
+    } as Parameters<typeof this.graphQLService.sdk.asyncSqlExecuteQuery>[0] & { isExecuteAnyway?: boolean });
 
     return taskInfo;
   }

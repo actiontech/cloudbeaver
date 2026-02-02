@@ -22,7 +22,7 @@ import { ConnectionSchemaManagerService } from '@cloudbeaver/plugin-datasource-c
 import { NavigationTabsService } from '@cloudbeaver/plugin-navigation-tabs';
 import { ConnectionInfoResource, createConnectionParam } from '@cloudbeaver/core-connections';
 import { CommonDialogService, DialogueStateResult } from '@cloudbeaver/core-dialogs';
-import { LocalStorageSqlDataSource, SqlDataSourceService } from '@cloudbeaver/plugin-sql-editor';
+import { LocalStorageSqlDataSource, QueryDataSource, SqlDataSourceService } from '@cloudbeaver/plugin-sql-editor';
 import { isSQLEditorTab, SqlEditorNavigatorService } from '@cloudbeaver/plugin-sql-editor-navigation-tab';
 import { SqlEditorSessionClosedDialog } from './SqlEditorSessionClosedDialog.js';
 
@@ -150,6 +150,10 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
     }
   }, [navigationTabsService, sqlDataSourceService, commonDialogService, connectionInfo, sqlEditorNavigatorService]);
 
+  const onStillExecute = useCallback(async () => {
+    await (model.source as QueryDataSource).requestWithExecuteAnyway();
+  }, [model]);
+
   useEffect(() => {
     const SQL_CONTEXT_ERROR_CODE = '508';
     if (errorInfo.error !== model.source.error) {
@@ -194,6 +198,9 @@ export const TableError = observer<Props>(function TableError({ model, loading, 
         </Button>
         <Button className={s(style, { button: true })} type="button" onClick={onCreateWorkflowNavigate}>
           {translate('ui_create_workflow')}
+        </Button>
+        <Button className={s(style, { button: true })} type="button" onClick={onStillExecute}>
+          {translate('ui_still_execute')}
         </Button>
       </div>
     </div>
