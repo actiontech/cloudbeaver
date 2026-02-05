@@ -18,6 +18,7 @@
     <modules>
         <module>clickhouse_com</module>
         <module>databend</module>
+        <module>dameng</module>
         <module>db2</module>
         <module>db2-jt400</module>
         <module>duckdb</module>

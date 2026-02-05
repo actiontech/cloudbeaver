@@ -11,17 +11,8 @@ mkdir ./cloudbeaver/server
 mkdir ./cloudbeaver/conf
 mkdir ./cloudbeaver/workspace
 
-echo "Pull cloudbeaver platform"
-
-cd ../..
-
-echo "Pull dbeaver platform"
-[ ! -d dbeaver ] && git clone --depth 1 https://github.com/dbeaver/dbeaver.git
-[ ! -d dbeaver-common ] && git clone --depth 1 https://github.com/dbeaver/dbeaver-common.git
-[ ! -d dbeaver-jdbc-libsql ] && git clone --depth 1 https://github.com/dbeaver/dbeaver-jdbc-libsql.git
-
-
-cd cloudbeaver/deploy
+echo "Pull and patch build deps (dbeaver, dbeaver-common, dbeaver-jdbc-libsql)"
+./scripts/clone-build-deps.sh
 
 echo "Build CloudBeaver server"
 
