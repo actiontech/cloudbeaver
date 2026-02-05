@@ -21,6 +21,7 @@
         <resource name="drivers/trino"/>
         <resource name="drivers/kyuubi"/>
         <resource name="drivers/databend"/>
+        <resource name="drivers/dameng"/>
     </extension>
 
     <!-- Bundles  -->
@@ -44,6 +45,7 @@
         <bundle id="drivers.trino" label="Trino drivers"/>
         <bundle id="drivers.kyuubi" label="Apache Kyuubi drivers"/>
         <bundle id="drivers.databend" label="Databend drivers"/>
+        <bundle id="drivers.dameng" label="达梦(DM) drivers"/>
     </extension>
 
     <!-- Enabled drivers -->
@@ -68,6 +70,7 @@
         <driver id="generic:duckdb_jdbc"/>
         <driver id="generic:kyuubi_hive"/>
         <driver id="databend:databend"/>
+        <driver id="generic:dameng_jdbc"/>
     </extension>
 
 
