@@ -22,6 +22,7 @@
         <resource name="drivers/kyuubi"/>
         <resource name="drivers/databend"/>
         <resource name="drivers/dameng"/>
+        <resource name="drivers/gaussdb"/>
     </extension>
 
     <!-- Bundles  -->
@@ -46,6 +47,7 @@
         <bundle id="drivers.kyuubi" label="Apache Kyuubi drivers"/>
         <bundle id="drivers.databend" label="Databend drivers"/>
         <bundle id="drivers.dameng" label="达梦(DM) drivers"/>
+        <bundle id="drivers.gaussdb" label="GaussDB/openGauss drivers"/>
     </extension>
 
     <!-- Enabled drivers -->
@@ -71,6 +73,7 @@
         <driver id="generic:kyuubi_hive"/>
         <driver id="databend:databend"/>
         <driver id="generic:dameng_jdbc"/>
+        <driver id="generic:gaussdb_jdbc"/>
     </extension>
 
 
