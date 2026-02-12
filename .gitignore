@@ -48,3 +48,6 @@ deploy/cloudbeaver
 server/**/target
 apps/**/target
 osgi-cache/
+
+web
+.idea
