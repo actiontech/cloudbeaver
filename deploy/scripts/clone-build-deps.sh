@@ -22,8 +22,9 @@ echo "DBeaver branch: $DBEAVER_BRANCH"
 
 chmod a+x $SCRIPT_DIR/*sh
 
-# 对 dbeaver 打达梦、GaussDB 驱动补丁
+# 对 dbeaver 打达梦、GaussDB 驱动补丁及 GaussDB 数据库列表补丁
 "$SCRIPT_DIR/patch-dbeaver-dameng.sh" "$(pwd)/dbeaver"
 "$SCRIPT_DIR/patch-dbeaver-gaussdb.sh" "$(pwd)/dbeaver"
+"$SCRIPT_DIR/patch-dbeaver-gaussdb-catalogs.sh" "$(pwd)/dbeaver"
 
 echo "Clone and patch done. You can run build from cloudbeaver/deploy (e.g. ./build-backend.sh)."
