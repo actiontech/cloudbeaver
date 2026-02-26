@@ -22,6 +22,7 @@
         <module>db2</module>
         <module>db2-jt400</module>
         <module>duckdb</module>
+        <module>gaussdb</module>
         <module>h2</module>
         <module>h2_v2</module>
         <module>hive2</module>

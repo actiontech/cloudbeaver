@@ -20,7 +20,11 @@ echo "DBeaver branch: $DBEAVER_BRANCH"
 [ ! -d dbeaver-common ] && git clone --depth 1 -b "$DBEAVER_BRANCH" https://github.com/dbeaver/dbeaver-common.git
 [ ! -d dbeaver-jdbc-libsql ] && git clone --depth 1 -b "$DBEAVER_BRANCH" https://github.com/dbeaver/dbeaver-jdbc-libsql.git
 
-# 对 dbeaver 打达梦驱动补丁
+chmod a+x $SCRIPT_DIR/*sh
+
+# 对 dbeaver 打达梦、GaussDB 驱动补丁及 GaussDB 数据库列表补丁
 "$SCRIPT_DIR/patch-dbeaver-dameng.sh" "$(pwd)/dbeaver"
+"$SCRIPT_DIR/patch-dbeaver-gaussdb.sh" "$(pwd)/dbeaver"
+"$SCRIPT_DIR/patch-dbeaver-gaussdb-catalogs.sh" "$(pwd)/dbeaver"
 
 echo "Clone and patch done. You can run build from cloudbeaver/deploy (e.g. ./build-backend.sh)."
